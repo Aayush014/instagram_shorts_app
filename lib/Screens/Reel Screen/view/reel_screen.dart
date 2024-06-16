@@ -1,18 +1,13 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_shorts_app/Utils/reel_details.dart';
+import 'package:instagram_shorts_app/Screens/Reel%20Screen/Provider/reel_provider.dart';
+import 'package:provider/provider.dart';
 
+import '../../../Utils/reel_details.dart';
 import 'controleer_screen.dart';
 
-class ReelScreen extends StatefulWidget {
-  const ReelScreen({super.key});
-
-  @override
-  State<ReelScreen> createState() => _ReelScreenState();
-}
-
-class _ReelScreenState extends State<ReelScreen> {
+class ReelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -39,110 +34,101 @@ class _ReelScreenState extends State<ReelScreen> {
       body: Container(
         height: height,
         width: width,
-        // color: Colors.grey,
         child: Swiper(
           scrollDirection: Axis.vertical,
           itemCount: reelDetails.length,
-          itemBuilder: (context, index) => Container(
-            alignment: Alignment.bottomLeft,
-            height: height,
-            width: width,
-            child: Stack(
-              children: [
-                ContentScreen(
-                  videoAssetPath: reelDetails[index]['vid'],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Align(
-                        alignment: Alignment.bottomLeft,
-                        child: CircleAvatar(
-                          backgroundColor: Color(0xffFD7171),
-                          radius: 28,
+          itemBuilder: (context, index) => Stack(
+            children: [
+              ContentScreen(videoAssetPath: reelDetails[index]['vid']),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Align(
+                      alignment: Alignment.bottomLeft,
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage('Assets/Img/Aayush.jpg'),
+                        radius: 25,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(reelDetails[index]["id"]),
+                    const SizedBox(height: 10),
+                    Text(reelDetails[index]["captions"]),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Icon(Icons.music_note_outlined),
+                        Text(
+                          reelDetails[index]["Music"],
+                          style: const TextStyle(fontSize: 12),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: width * 0.3,
+                          decoration: BoxDecoration(
+                            color: const Color(0xffFD7171),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.star_border),
+                              Text("  Featured"),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(reelDetails[index]["id"]),
-                      const SizedBox(height: 10),
-                      Text(reelDetails[index]["captions"]),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const Icon(Icons.music_note_outlined),
-                          Text(
-                            reelDetails[index]["Music"],
-                            style: const TextStyle(fontSize: 12),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            height: 40,
-                            width: width * 0.3,
-                            decoration: BoxDecoration(
-                              color: const Color(0xffFD7171),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                        Column(
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
                               children: [
-                                Icon(Icons.star_border),
-                                Text("  Featured"),
+                                const Icon(CupertinoIcons.heart, size: 40),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    Provider.of<ReelProvider>(context,
+                                            listen: false)
+                                        .toggleLike();
+                                  },
+                                  child: Icon(
+                                    CupertinoIcons.heart_fill,
+                                    color: (Provider.of<ReelProvider>(context)
+                                            .isLiked)
+                                        ? Colors.red
+                                        : Colors.transparent,
+                                    size: 33,
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                          Column(
-                            children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  const Icon(CupertinoIcons.heart, size: 40),
-                                  CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    onPressed: () {
-                                      setState(() {
-                                        isLike = !isLike;
-                                      });
-                                    },
-                                    child: Icon(
-                                      CupertinoIcons.heart_fill,
-                                      color: isLike
-                                          ? Colors.red
-                                          : Colors.transparent,
-                                      size: 33,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Text("300k")
-                            ],
-                          ),
-                          const Column(
-                            children: [
-                              Icon(CupertinoIcons.chat_bubble_text, size: 40),
-                              Text("30k")
-                            ],
-                          ),
-                          const Icon(Icons.share, size: 40),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      const LinearProgressIndicator(value: 0.5),
-                      SizedBox(height: height * 0.15),
-                    ],
-                  ),
+                            const Text("300k")
+                          ],
+                        ),
+                        const Column(
+                          children: [
+                            Icon(CupertinoIcons.chat_bubble_text, size: 40),
+                            Text("30k")
+                          ],
+                        ),
+                        const Icon(Icons.share, size: 40),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(height: height * 0.14),
+                  ],
                 ),
-
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -151,8 +137,9 @@ class _ReelScreenState extends State<ReelScreen> {
         children: [
           Container(
             alignment: Alignment.bottomCenter,
-            height: 130,
+            height: 110,
             width: width / 1.1,
+            color: Colors.transparent,
             child: Container(
               height: 80,
               decoration: BoxDecoration(
@@ -176,12 +163,17 @@ class _ReelScreenState extends State<ReelScreen> {
             child: CupertinoButton(
               pressedOpacity: 0.5,
               padding: EdgeInsets.zero,
-              onPressed: () {},
-              child: const CircleAvatar(
+              onPressed: () {
+                // Provider.of<ReelProvider>(context,listen: false).togglePlayPause();
+              },
+              child: CircleAvatar(
                 backgroundColor: Color(0xffFD7171),
                 radius: 35,
                 child: Icon(
-                  CupertinoIcons.play_arrow_solid,
+                  // (Provider.of<ReelProvider>(context).isPlaying)?
+                  CupertinoIcons.play_arrow_solid
+                  // :Icons.pause
+                  ,
                   size: 30,
                 ),
               ),
@@ -189,9 +181,6 @@ class _ReelScreenState extends State<ReelScreen> {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
-
-bool isLike = true;

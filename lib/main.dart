@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'Screens/Intro Screen/view/intro_screen.dart';
 
 void main(){
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,9 +14,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark(),
-      home: ReelScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ReelProvider(""),)
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(),
+        home: IntroFirst(),
+      ),
     );
   }
 }
